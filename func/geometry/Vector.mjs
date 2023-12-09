@@ -163,7 +163,21 @@ export function GEM(A, B) {
     }
 }
 
-
+export function GetPerpendicularVector(a) {
+    if (a.z == 0) {
+        return new Vector3D(
+            -a.y,
+            a.x,
+            0
+        )
+    } else {
+        return new Vector3D(
+            -a.y,
+            -a.x,
+            (2*a.x*a.y)/a.z,
+        )
+    }
+}
 
 
 

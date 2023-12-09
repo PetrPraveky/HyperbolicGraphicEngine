@@ -1,7 +1,7 @@
 import { Vector3D } from "../Vector.mjs";
 import { HyperbolicLineData } from "./Space.mjs";
 import { Matrix3x3 } from "../Matrix.mjs";
-import { Hyperbolic3DRender } from "./hyperbolicRender.mjs";
+import { Hyperbolic3DRender } from "./HyperbolicRender.mjs";
 
 export class HyperbolicLine {
     /**
@@ -53,7 +53,7 @@ export class HyperbolicLine {
 
 
     DrawLineGPU(color = this.color) {
-        GPU_HyperbolicLineDraw(this);
+        // GPU_HyperbolicLineDraw(this);
     }
 
     /**

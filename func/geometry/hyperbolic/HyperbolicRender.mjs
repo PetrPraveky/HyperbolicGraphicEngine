@@ -1,6 +1,7 @@
 import { Matrix3x3 } from "../Matrix.mjs"
 import { Vector3D, Vector3DFromArray } from "../Vector.mjs"
 import { HyperbolicLine } from "./HyperbolicLine.mjs"
+import { HyperbolicPlane } from "./HyperbolicPlane.mjs"
 import { Space } from "./Space.mjs"
 
 
@@ -46,6 +47,12 @@ export class Hyperbolic3DRender {
         this.hasBorder = hasBorder;
         this.hasOutlines = hasOutlines;
         this.hasBackground = hasBackground;
+
+        this.cameraVector = new Vector3D(0, 0, 1);
+
+        // Detaily
+        this.planeDetail = 0.1;
+        this.lineDetail = 0.1e-1;
 
         // Rerender
         this._Render()
@@ -109,6 +116,8 @@ export class Hyperbolic3DRender {
         if (obj instanceof HyperbolicLine) {
             if (color == "") color = obj.color
             obj.DrawLine(color);
+        } else if (obj instanceof HyperbolicPlane) {
+            obj.DrawPlane(color);
         } else {
             // OUTPUT ERR
             console.log((typeof obj).toString()+" : Není renderovatelný")

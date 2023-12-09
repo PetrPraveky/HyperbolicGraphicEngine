@@ -1,5 +1,6 @@
 import { Vector3D } from "../func/geometry/Vector.mjs";
 import { HyperbolicLine } from "../func/geometry/hyperbolic/HyperbolicLine.mjs";
+import { HyperbolicPlane } from "../func/geometry/hyperbolic/HyperbolicPlane.mjs";
 import { Hyperbolic3DRender } from "../func/geometry/hyperbolic/HyperbolicRender.mjs";
 
 let GEOM
@@ -30,9 +31,33 @@ export class INIT {
             new HyperbolicLine(GEOM, new Vector3D( 3,  0, -3), new Vector3D(0, 1, 0), sampleCubeColor),
             new HyperbolicLine(GEOM, new Vector3D(-3,  0, -3), new Vector3D(0, 1, 0), sampleCubeColor),
             new HyperbolicLine(GEOM, new Vector3D(-3,  0,  3), new Vector3D(0, 1, 0), sampleCubeColor),
-        ]
-        GEOM.RegisterObjects(cubeArrSample)
 
+            new HyperbolicLine(GEOM, new Vector3D(1, 0, 0), new Vector3D(0, 1, 0), sampleCubeColor)
+        ]
+        //GEOM.RegisterObjects(cubeArrSample)
+
+        
+        let samplePlane = new HyperbolicPlane(GEOM, new Vector3D(1, 0, 0))
+        GEOM.RegisterObject(samplePlane);
+
+        // let samplePlane2 = new HyperbolicPlane(GEOM, new Vector3D(0, 1, 0))
+        // GEOM.RegisterObject(samplePlane2);
+
+        //samplePlane.DrawPlane();
+        /*
+        let cubeArrPlanes = [
+            new HyperbolicPlane(GEOM, new Vector3D(1, 0, 0)),
+            new HyperbolicPlane(GEOM, new Vector3D(-1, 0, 0)),
+            new HyperbolicPlane(GEOM, new Vector3D(0, 1, 0)),
+            new HyperbolicPlane(GEOM, new Vector3D(0, -1, 0)),
+            new HyperbolicPlane(GEOM, new Vector3D(0, 0, 1)),
+            new HyperbolicPlane(GEOM, new Vector3D(0, 0, -1)),
+            
+        ]
+        */
+        
+        
+        // GEOM.RegisterObjects(cubeArrPlanes)
         GEOM.DrawAll()
         // this.RotateStart();
     }

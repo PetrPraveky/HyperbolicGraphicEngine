@@ -7,10 +7,8 @@ import { HyperbolicPlaneBoundless } from "../func/geometry/hyperbolic/Hyperbolic
 let GEOM
 
 export class INIT {
-    constructor(GPU) {
+    constructor() {
         const c = document.getElementById("hyperbolicCanvas")
-
-        const gpu = GPU
 
         GEOM = new Hyperbolic3DRender(true, true, true)
         GEOM.InitWebGL();
@@ -89,7 +87,7 @@ export class INIT {
     RotateStart() {
         let aAdd = Math.PI/500
     
-        GEOM.RotateAll(aAdd/2, aAdd, 0)
+        GEOM.RotateAll(aAdd*2, aAdd, 0)
         GEOM.DrawAll()
         
         window.requestAnimationFrame(this.RotateStart.bind(this))

@@ -34,7 +34,7 @@ export class Hyperbolic3DRender {
      * @param {boolean} hasOutlines 
      * @param {boolean} hasBackground 
      */
-    constructor (hasBorder, hasOutlines, hasBackground, gpu) {
+    constructor (hasBorder, hasOutlines, hasBackground) {
         this.canvas = document.getElementById("hyperbolicCanvas")
         this.mainCanvas = document.getElementById("hyperbolicCanvasMain")
 

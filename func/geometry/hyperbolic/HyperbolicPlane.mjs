@@ -45,7 +45,7 @@ export class HyperbolicPlaneBoundless {
         [this.x0, this.y0, this.ro, this.angleLow, this.angleHig] = HyperbolicLineData(this.space, newPos);
 
 
-        // Data
+        // Data pro webgl
         this.allTrianglesI = [] // Indexy
         this.allTrianglesV = [] // Vrcholy
         this.allTrianglesN = [] // Normály
@@ -56,15 +56,25 @@ export class HyperbolicPlaneBoundless {
     }
 
     /**
-     * Změní úhly
+     * Změní úhly, např kvli rotaci
      * @param {number} a 
      * @param {number} b 
      * @param {number} g 
      */
     ChangeAngle(alpha, beta, gamma) {
-        this.alpha += alpha;
-        this.beta += beta;
-        this.gamma += gamma;
+        /*
+        this.alpha += alpha % (2 * Math.PI);
+        this.beta += beta % (2 * Math.PI);
+        this.gamma += gamma % (2 * Math.PI);
+        */
+        this.alpha = (this.alpha > 2*Math.PI) ?  alpha : alpha + this.alpha
+        this.beta = (this.beta > 2*Math.PI) ?  beta : beta + this.beta
+        this.gamma = (this.gamma > 2*Math.PI) ? gamma : gamma + this.gamma
+        
+        let clear = "clear: both;"
+        console.log("%c"+this.alpha, clear)
+        console.log("%c"+this.beta, clear)
+        console.log("%c"+this.gamma, clear)
     }
 
     CreateWebGLPoints() {

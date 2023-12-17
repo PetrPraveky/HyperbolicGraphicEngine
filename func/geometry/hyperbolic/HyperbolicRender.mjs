@@ -1,7 +1,9 @@
-import { Matrix3x3 } from "../Matrix.mjs"
-import { Vector3D, Vector3DFromArray } from "../Vector.mjs"
+import { Matrix3x3 } from "../../math/Matrix.mjs";
+import { Vector3D, Vector3DFromArray } from "../../math/Vector.mjs";
+import { WebGLSetup } from "../../webgl/WebGLStartup.mjs";
 import { HyperbolicLine } from "./HyperbolicLine.mjs"
-import { HyperbolicPlane } from "./HyperbolicPlane.mjs"
+import { HyperbolicPlaneBoundless } from "./HyperbolicPlane.mjs";
+import { HyperbolicPlane } from "./HyperbolicPlaneOLD.mjs"
 import { Space } from "./Space.mjs"
 
 
@@ -32,9 +34,12 @@ export class Hyperbolic3DRender {
      * @param {boolean} hasOutlines 
      * @param {boolean} hasBackground 
      */
-    constructor (canvas, hasBorder, hasOutlines, hasBackground, gpu) {
-        this.canvas = canvas
+    constructor (hasBorder, hasOutlines, hasBackground, gpu) {
+        this.canvas = document.getElementById("hyperbolicCanvas")
+        this.mainCanvas = document.getElementById("hyperbolicCanvasMain")
+
         this.ctx = this.canvas.getContext("2d")
+        this.mainCtx = this.mainCanvas.getContext("2d")
 
         this.saved = new Map();
         this.slot = 0
@@ -48,14 +53,23 @@ export class Hyperbolic3DRender {
         this.hasOutlines = hasOutlines;
         this.hasBackground = hasBackground;
 
-        this.cameraVector = new Vector3D(0, 0, 1);
-
         // Detaily
-        this.planeDetail = 0.1;
-        this.lineDetail = 0.1e-1;
+        this.planeDetail = 30;
+        this.lineDetail = 30;
+
+        // Základní vlastnosti
+        this.center = new Vector3D(this.canvas.width/2, this.canvas.height/2, 0)
+        this.r = 10
+        this.scale = this.center.x/this.r
+        this.space = new Space(this.r)
 
         // Rerender
         this._Render()
+    }
+
+    InitWebGL() {
+        this.webgl = new WebGLSetup();
+        this.webgl.InitShaderProgram();
     }
 
     /**
@@ -64,19 +78,17 @@ export class Hyperbolic3DRender {
      */
     _Render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        // Základní vlastnosti
-        this.center = new Vector3D(this.canvas.width/2, this.canvas.height/2, 0)
-        this.r = 10
-        this.scale = this.center.x/this.r
-        this.space = new Space(this.r)
+
 
         // Pozadí
+        /*
         if (this.hasBackground) {
             this.ctx.fillStyle = this.backgrColor
             this.ctx.beginPath()
             this.ctx.arc(this.center.x, this.center.y, this.center.x,0,2*Math.PI);
             this.ctx.fill()
         }
+        */
 
         // Border
         if (this.hasBorder) {
@@ -95,8 +107,16 @@ export class Hyperbolic3DRender {
         this.ctx.beginPath()
         this.ctx.arc(this.center.x, this.center.y, 2, 0, 2*Math.PI);
         this.ctx.fill()
-
     }
+    /**
+     * POUŽÍVÁ SE INTERNĚ, SPOJÍ CANVASY
+     */
+    _Combine() {
+        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height)
+        this.mainCtx.drawImage(document.getElementById("hyperbolicCanvasWebGL"), 0, 0)
+        this.mainCtx.drawImage(this.canvas, 0, 0);
+    }
+
 
     /**
      * Vše převykreslí/vykreslí
@@ -106,21 +126,38 @@ export class Hyperbolic3DRender {
         for (const [slot, obj] of this.saved) {
             this.Draw(obj)
         }
+        this._Combine()
     }
 
     /**
      * Vykreslí objekt v 3D Hyperbolickém prostoru.
      * @param {*} obj 
      */
-    Draw(obj, color="") {
+    Draw(obj, color="", single=false) {
         if (obj instanceof HyperbolicLine) {
             if (color == "") color = obj.color
             obj.DrawLine(color);
-        } else if (obj instanceof HyperbolicPlane) {
-            obj.DrawPlane(color);
+        } else if (obj instanceof HyperbolicPlaneBoundless) {
+            // Vykreslí přes openGL
+            
+
+            this.webgl.DrawTriangles(
+                obj.allTrianglesI,
+                obj.allTrianglesV,
+                obj.allTrianglesN,
+                obj.allTrianglesC,
+                obj.allTrianglesI.length,
+                obj.alpha,
+                obj.beta,
+                obj.gamma
+            )
+            
         } else {
             // OUTPUT ERR
             console.log((typeof obj).toString()+" : Není renderovatelný")
+        }
+        if (single) {
+            this._Combine()
         }
     }
 
@@ -160,8 +197,12 @@ export class Hyperbolic3DRender {
      * @param {number} gamma 
      */
     RotateAll(alpha, beta, gamma) {
+        this.webgl.GLReset();
         for (const [slot, obj] of this.saved) {
             obj.ChangeAngle(alpha, beta, gamma)
+            if (obj instanceof HyperbolicPlaneBoundless) {
+                this.Draw(obj)
+            }
         }
     }
 }

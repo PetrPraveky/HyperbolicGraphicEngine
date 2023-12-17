@@ -170,6 +170,18 @@ export function GetPerpendicularVector(a) {
             a.x,
             0
         )
+    } else if (a.x == 0) {
+        return new Vector3D(
+            0,
+            a.z,
+            -a.y
+        )
+    } else if (a.y == 0) {
+        return new Vector3D(
+            -a.z,
+            0,
+            a.x,
+        )
     } else {
         return new Vector3D(
             -a.y,

@@ -1,6 +1,6 @@
-import { Vector3D } from "../Vector.mjs";
+import { Vector3D } from "../../math/Vector.mjs";
 import { HyperbolicLineData } from "./Space.mjs";
-import { Matrix3x3 } from "../Matrix.mjs";
+import { Matrix3x3 } from "../../math/Matrix.mjs";
 import { Hyperbolic3DRender } from "./HyperbolicRender.mjs";
 
 export class HyperbolicLine {
@@ -79,16 +79,16 @@ export class HyperbolicLine {
             new Vector3D(0, 0, 1)
         )
 
-        let diff = (Math.abs(this.angleHig-this.angleLow))/(1/this.space.distribution)
+        let diff = (Math.abs(this.angleHig-this.angleLow))/(this.geometry.lineDetail)
         // Mělo by generovat, snad
         let pointBase = [
-            this.x0*this.b1.x+this.y0*this.b2.x,
-            this.x0*this.b1.y+this.y0*this.b2.y,
-            this.x0*this.b1.z+this.y0*this.b2.z
+            this.x0*this.b1.x,
+            this.x0*this.b1.y,
+            this.x0*this.b1.z,
         ]
 
         this.geometry.ctx.beginPath();
-        for (let t = this.angleLow; t < this.angleHig-diff; t += diff) {            
+        for (let t = this.angleLow; t < this.angleHig; t += diff) {            
             let add1 = [
                 this.ro*Math.cos(t)*this.b1.x+this.ro*Math.sin(t)*this.b2.x,
                 this.ro*Math.cos(t)*this.b1.y+this.ro*Math.sin(t)*this.b2.y,
@@ -140,6 +140,28 @@ export class HyperbolicLine {
                 geom.center.y-point[1]*geom.scale,
             ]
         }
+    }
+
+    /**
+     * Vrátí všechny body křivky na základu vstupní distribuce (použití v @see HyperbolicPlane )
+     * !!! Nepřepočítává do geometrie, vrací v základním tvaru
+     * @param {number} diff
+     * @returns {Array<Array<number>>}
+     */
+    GetAllLinePoints(diff) {        
+        // Mělo by generovat, snad
+        this.geometry.ctx.beginPath();
+        let points = []
+        for (let t = this.angleLow; t < this.angleHig; t += diff) {            
+            let p = [
+                this.ro*Math.cos(t),
+                this.ro*Math.sin(t),
+                0
+            ]
+            points.push(p)
+        }
+        return points;
+        
     }
 
     /**

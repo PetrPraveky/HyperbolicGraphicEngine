@@ -1,5 +1,5 @@
-import { Matrix3x3 } from "../Matrix.mjs";
-import { Vector3D, Vector3DFromArray } from "../Vector.mjs";
+import { Matrix3x3 } from "../../math/Matrix.mjs";
+import { Vector3D, Vector3DFromArray } from "../../math/Vector.mjs";
 
 export class Space {
     /**
